@@ -118,8 +118,8 @@ def make_additional_raw_data(paths_for_df, chroma_stft, chroma_cens, chroma_cqt,
 
 
 def merge_features():
-    """Соединяем датафреймы по стобцу путей, чтобы получить датафрейм и с базовыми, и с дополнительными признаками
-    звуковых файлов"""
+    """Соединяем датафреймы по столбцу с путями до файлов, чтобы получить датафрейм и с базовыми, 
+    и с дополнительными признаками звуковых файлов"""
 
     df_base = pd.read_csv('noises_features.csv', sep=',', index_col=0)
     df_additional = pd.read_csv('noises_additional_features.csv', sep=',', index_col=0)
