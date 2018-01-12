@@ -125,7 +125,7 @@ def merge_features():
     df_additional = pd.read_csv('noises_additional_features.csv', sep=',', index_col=0)
     df_result = pd.merge(df_base, df_additional, on='Paths')
     df_result.to_csv('full_features.csv', sep=',', index=False)
-    return df_result
+    return None
 
 
 def main():
