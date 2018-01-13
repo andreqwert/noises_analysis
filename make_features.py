@@ -2,6 +2,8 @@ import os
 import librosa
 import numpy as np
 import pandas as pd
+import warnings
+warnings.filterwarnings("ignore")
 
 
 def get_audios(folderpath):
@@ -11,13 +13,32 @@ def get_audios(folderpath):
 
     for every_folder in os.listdir(folderpath):
         for every_file in os.listdir(folderpath + every_folder):
-            if '.DS_Store' in every_file:
+            if every_file == '.DS_Store':
                 continue
             fullpaths = np.append(fullpaths, str(folderpath) + str(every_folder) + '/' + str(every_file))
 
     audios = [np.append(audios, librosa.load(path)[0]) for path in fullpaths]
     paths_for_df = [(path.split('/')[-2] +'/'+ path.split('/')[-1]) for path in fullpaths]
     return paths_for_df, audios
+
+
+def make_targets(paths_for_df):
+    """Строим разметку данных (= целевые метки). Если в пути есть ключевое слово - ставим соответствующее число"""
+
+    targets = np.empty(0)
+    for path in paths_for_df:
+        type_of_noise = path.split('/')[0]
+        if type_of_noise == 'construction':
+            targets = np.append(targets, '1')
+        elif type_of_noise == 'people':
+            targets = np.append(targets, '2')
+        elif type_of_noise == 'railway':
+            targets = np.append(targets, '3')
+        elif type_of_noise == 'roads':
+            targets = np.append(targets, '4')
+        else:
+            targets = np.append(targets, '0')
+    return targets
 
 
 def get_base_features(audios):
@@ -40,10 +61,11 @@ def get_base_features(audios):
     return mfccs, mean, std, var, min_, max_, zero_crossing_rate
 
 
-def make_base_raw_data(paths_for_df, mfccs, mean, std, var, min_, max_, zero_crossing_rate):
+def make_base_raw_data(paths_for_df, targets, mfccs, mean, std, var, min_, max_, zero_crossing_rate):
     """Формируем датафрейм с базовыми признаками"""
 
-    df_base = pd.DataFrame({'Paths':paths_for_df, 
+    df_base = pd.DataFrame({'Paths':paths_for_df,
+                       'Type_of_noise':targets, 
                        'MFCCs (mean)':mfccs, 
                        'Mean':mean,
                        'Std':std,
@@ -118,24 +140,27 @@ def make_additional_raw_data(paths_for_df, chroma_stft, chroma_cens, chroma_cqt,
 
 
 def merge_features():
-    """Соединяем датафреймы по столбцу с путями до файлов, чтобы получить датафрейм и с базовыми, 
-    и с дополнительными признаками звуковых файлов"""
+    """Соединяем датафреймы по стобцу путей, чтобы получить датафрейм и с базовыми, и с дополнительными признаками
+    звуковых файлов"""
 
     df_base = pd.read_csv('noises_features.csv', sep=',', index_col=0)
     df_additional = pd.read_csv('noises_additional_features.csv', sep=',', index_col=0)
     df_result = pd.merge(df_base, df_additional, on='Paths')
     df_result.to_csv('full_features.csv', sep=',', index=False)
-    return None
+    return df_result
+
 
 
 def main():
     folderpath = '/Users/User/Desktop/noises/'
     audios = get_audios(folderpath)
+    targets = make_targets(audios[0])
     base_features = get_base_features(audios[1])
-    base_raw_data = make_base_raw_data(audios[0], *base_features)
+    base_raw_data = make_base_raw_data(audios[0], targets, *base_features)
     additional_features = get_additional_features(audios[1])
     additional_raw_data = make_additional_raw_data(audios[0], *additional_features)
-    merge_features()
+    features_merging = merge_features()
+
 
 
 if __name__ == '__main__':
