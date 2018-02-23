@@ -47,7 +47,7 @@ def decision_trees_classifier(X, y, cv):
     tree_grid.fit(X_train, y_train)
     print('Decision trees, GridSearchCV-params: ', tree_grid.best_params_) # {'max_depth': 6}
     print('Decision trees, GridSearchCV-score: ', tree_grid.best_score_) # 0.660098522167
-    print('Accuracy: ', accuracy_score(y_test, tree_grid.predict(X_test)))
+    print('Accuracy: ', accuracy_score(y_test, tree_grid.predict(X_test))) # 0.545454545455
     print('----------------\n')
 
 
@@ -58,7 +58,7 @@ def knn_classifier(X, y, cv):
     knn = KNeighborsClassifier()   # объект модели
     knn.fit(X_train, y_train)
     knn_pred = knn.predict(X_test)
-    print('kNN: ', accuracy_score(y_test, knn_pred)) # 0.534090909091
+    print('kNN: ', accuracy_score(y_test, knn_pred)) # 0.568181818182
 
 
     # Попробуем настроить число соседей в алгоритме kNN
@@ -66,16 +66,16 @@ def knn_classifier(X, y, cv):
     knn_params = {'knn__n_neighbors':range(1, 10)}
     knn_grid = GridSearchCV(knn_pipe, knn_params, cv=5, n_jobs=-1)
     knn_grid.fit(X_train, y_train)
-    print('kNN, GridSearchCV-params: ', knn_grid.best_params_) # {'knn__n_neighbors': 4}
-    print('kNN, GridSearchCV-score: ', knn_grid.best_score_) # 0.738916256158
-    print('Accuracy: ', accuracy_score(y_test, knn_grid.predict(X_test))) # 0.659090909091
+    print('kNN, GridSearchCV-params: ', knn_grid.best_params_) # {'knn__n_neighbors': 5}
+    print('kNN, GridSearchCV-score: ', knn_grid.best_score_) # 0.674876847291
+    print('Accuracy: ', accuracy_score(y_test, knn_grid.predict(X_test))) # 0.727272727273
     print('----------------\n')
 
 
 
 def RFClassifier(X, y, cv):
 
-    rf = RandomForestClassifier(n_estimators=100) # 0.780404844865
+    rf = RandomForestClassifier(n_estimators=100) # 0.763232122117
     rf.fit(X, y)
     print('RandomForestClassifier: ', cross_val_score(rf, X, y, cv=cv).mean())
 
@@ -84,9 +84,9 @@ def RFClassifier(X, y, cv):
     forest_params = {'max_depth': range(1, 11)}
     forest_grid = GridSearchCV(forest, forest_params, cv=5, n_jobs=-1)
     forest_grid.fit(X_train, y_train)
-    print('RandomForest, GridSearchCV-params: ', forest_grid.best_params_) #  {'max_depth': 9}
-    print('RandomForest, GridSearchCV-score: ', forest_grid.best_score_) # 0.71921182266
-    print('Accuracy: ', accuracy_score(y_test, forest_grid.predict(X_test))) # 0.784090909091
+    print('RandomForest, GridSearchCV-params: ', forest_grid.best_params_) #  {'max_depth': 5}
+    print('RandomForest, GridSearchCV-score: ', forest_grid.best_score_) # 0.724137931034
+    print('Accuracy: ', accuracy_score(y_test, forest_grid.predict(X_test))) # 0.795454545455
     print('----------------\n')
 
 
@@ -96,7 +96,3 @@ AdaBoost_classifier(X, y, cv)
 RFClassifier(X, y, cv)
 decision_trees_classifier(X, y, cv)
 knn_classifier(X, y, cv)
-
-
-
-
