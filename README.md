@@ -5,7 +5,8 @@ That is an open project of noise pollution classification.
 - Highways;    
 - Railway;    
 - Human flow;
-- Construction.    
+- Construction.  
+
 After calculation, all the features are recorded to a dataframe with `.csv` extension. The following pipeline covers category classification based on classical ML methods (`noises_classification.py`). It includes Random Forest, Decision Tree classifiers as well as KNN.
 
 
