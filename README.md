@@ -1,6 +1,6 @@
 # Noises analysis
 
-That is an open project of noise pollution classification.  
+That is an open project of noise pollutions classification.  
 `make_features.py` script calculates features of the 4-second snippets which represent noise pollution for one of the categories:
 - Highways;    
 - Railway;    
